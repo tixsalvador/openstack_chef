@@ -10,3 +10,7 @@ ruby_block "host_file" do
     file.write_file
   end
 end
+
+execute 'enable_all_ports_on_localnet' do
+  command '/bin/firewall-cmd --zone=public --add-rich-rule="rule family="ipv4" source address="10.0.0.0/24" accept"'
+end
