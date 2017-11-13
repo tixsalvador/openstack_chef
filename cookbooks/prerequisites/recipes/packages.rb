@@ -4,7 +4,7 @@ package 'chrony' do
 end
 
 if node['hostname'] == "controller"
-   ruby_block "edit chrony" do
+   ruby_block "edit controller chrony" do
      block do
        file = Chef::Util::FileEdit.new("/etc/chrony.conf")
        file.insert_line_after_match('^.*?allow\s\d{1,3}\.\d{1,3}.*$', 'allow 10.0.0.0/24') 
@@ -14,6 +14,29 @@ if node['hostname'] == "controller"
    end # ruby_block
 
    service 'chronyd' do
-     subscribes :restart, "ruby_block[edit chrony]"
+     subscribes :restart, "ruby_block[edit controller chrony]"
    end #service chronyd
 end #if node
+
+if node['hostname'] != "controller"
+   ruby_block "remove other nodes ntp server" do
+     block do
+       file = Chef::Util::FileEdit.new("/etc/chrony.conf")
+       file.search_file_delete('^.*?server\s\d\.\w+\.pool.*?\siburst.*$')
+       file.write_file
+     end
+   end
+   
+   ruby_block "add controller as ntp server on other nodes" do
+     block do
+       file = Chef::Util::FileEdit.new("/etc/chrony.conf")
+       file.insert_line_after_match('^.*?Please\sconsider\sjoining\s.*$', 'server controller iburst')
+       file.write_file
+     end
+     not_if "egrep '^server\scontroller\siburst' /etc/chrony.conf"
+   end
+
+   service 'chronyd' do
+     subscribes :restart, "ruby_block[add controller as ntp server on other nodes]"
+   end
+end 
