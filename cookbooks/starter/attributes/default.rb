@@ -2,6 +2,6 @@
 # attributes to be applied to nodes that run this cookbook.
 
 # Set a default name
-default["starter_name"] = "Sam Doe"
+default['starter_name'] = 'Sam Doe'
 
 # For further information, see the Chef documentation (https://docs.chef.io/essentials_cookbook_attribute_files.html).
