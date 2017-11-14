@@ -19,18 +19,11 @@ if node['hostname'] == 'controller'
 end # if node
 
 if node['hostname'] != 'controller'
-  ruby_block 'remove other nodes ntp server' do
-    block do
-      file = Chef::Util::FileEdit.new('/etc/chrony.conf')
-      file.search_file_delete('^.*?server\s\d\.\w+\.pool.*?\siburst.*$')
-      file.write_file
-    end
-  end
-
   ruby_block 'add controller as ntp server on other nodes' do
     block do
       file = Chef::Util::FileEdit.new('/etc/chrony.conf')
       file.insert_line_after_match('^.*?Please\sconsider\sjoining\s.*$', 'server controller iburst')
+      file.search_file_delete('^.*?server\s\d\.\w+\.pool.*?\siburst.*$')
       file.write_file
     end
     not_if "egrep '^server\scontroller\siburst' /etc/chrony.conf"
