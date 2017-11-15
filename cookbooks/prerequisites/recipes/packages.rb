@@ -3,6 +3,23 @@ package 'chrony' do
   action :install
 end
 
+package 'centos-release-openstack-pike' do
+  package_name 'centos-release-openstack-pike'
+  action :install
+end
+
+execute 'yum-update-all' do
+  command 'yum -y upgrade'
+  subscribes :run, 'package[centos-release-openstack-pike]', :immediately
+  action :nothing
+end
+
+['python-openstackclient', 'openstack-selinux'].each do |pkg|
+  package pkg do
+    action :install
+  end
+end
+
 if node['hostname'] == 'controller'
   ruby_block 'edit controller chrony' do
     block do
