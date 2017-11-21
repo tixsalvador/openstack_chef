@@ -20,7 +20,7 @@ end
   end
 end
 
-if node['hostname'] == 'controller'
+if node.name == 'controller1'
   ruby_block 'edit controller chrony' do
     block do
       file = Chef::Util::FileEdit.new('/etc/chrony.conf')
@@ -35,7 +35,7 @@ if node['hostname'] == 'controller'
   end # service chronyd
 end # if node
 
-if node['hostname'] != 'controller'
+if node.name != 'controller1'
   ruby_block 'add controller as ntp server on other nodes' do
     block do
       file = Chef::Util::FileEdit.new('/etc/chrony.conf')

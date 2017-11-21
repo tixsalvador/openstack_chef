@@ -11,6 +11,14 @@ ruby_block 'host_file' do
   end
 end
 
+package 'firewalld' do
+  action :install
+end
+
+service 'firewalld' do
+  action [:enable, :start]
+end
+
 execute 'enable_all_ports_on_localnet' do
   command '/bin/firewall-cmd --zone=public --permanent --add-rich-rule="rule family="ipv4" source address="10.0.0.0/24" accept"'
   not_if '/bin/firewall-cmd --list-rich-rule | grep 10.0.0.0'
