@@ -1,0 +1,22 @@
+---
+driver:
+  name: docker
+  use_sudo: false
+  privileged: true
+
+provisioner:
+  name: chef_solo
+
+platforms:
+  - name: centos-7.2
+    driver_config:
+      run_command: /usr/lib/systemd/systemd
+
+suites:
+  - name: default
+    run_list:
+    - recipe[prerequisites::default]
+    verifier:
+      inspec_tests:
+        - test/smoke/default
+    attributes:
