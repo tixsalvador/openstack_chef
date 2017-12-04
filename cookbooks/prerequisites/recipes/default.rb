@@ -26,6 +26,13 @@ execute 'enable_all_ports_on_localnet' do
   not_if '/bin/firewall-cmd --list-rich-rule | grep 10.0.0.0'
 end
 
+if node.name == 'controller1'
+  execute 'allow mysql connection' do
+    command '/bin/firewall-cmd --add-service=mysql'
+    not_if '/bin/firewall-cmd --list-services | grep mysql'
+  end
+end 
+
 service 'firewalld' do
   subscribes :reload, 'execute[enable_all_ports_on_localnet]'
 end
