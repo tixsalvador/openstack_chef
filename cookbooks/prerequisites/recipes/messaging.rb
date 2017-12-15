@@ -8,9 +8,9 @@ if node.name == 'controller1'
 
   ruby_block 'Add controller hostname to hosts file' do
     block do
-    file = Chef::Util::FileEdit.new('/etc/hosts')
-   file.insert_line_if_no_match("#{nodeipaddress}  #{nodehostname}", "#{nodeipaddress}  #{nodehostname}")
-    file.write_file
+      file = Chef::Util::FileEdit.new('/etc/hosts')
+      file.insert_line_if_no_match("#{nodeipaddress}  #{nodehostname}", "#{nodeipaddress}  #{nodehostname}")
+      file.write_file
     end
   end
    
